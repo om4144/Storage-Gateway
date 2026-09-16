@@ -57,3 +57,30 @@ async def get_object(object_id: str, session: Session = Depends(get_session)):
     media_type=record.content_type,
     headers={"Content-Disposition": f'attachment; filename="{record.filename}"'}
   )
+
+@router.delete("/delete")
+async def delete_key(object_id: str, session: Session = Depends(get_session)):
+  # Task 1: get key using object_id
+  record = session.get(ObjectRecord, object_id)
+
+  # Task 2: Raise exception if record is empty or key not found
+  if not record:
+    raise HTTPException(
+      status_code= 404,
+      detail= f"Bad Request: 'Invalid object id: {object_id}'"
+    )
+
+  # Task 3: Deleting object
+  try:
+    await storage.delete(session=session, object_id=object_id, key=record.key)
+
+  except Exception as e:
+    raise HTTPException(
+      status_code= 500,
+      details= "Internal Server Error"
+    )
+
+  return HTTPException(
+    status_code= 200,
+    detail= f"Successfully delete the resource with object_id: {object_id}"
+  )
