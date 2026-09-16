@@ -84,3 +84,17 @@ async def delete_key(object_id: str, session: Session = Depends(get_session)):
     status_code= 200,
     detail= f"Successfully delete the resource with object_id: {object_id}"
   )
+
+@router.get("/metadata")
+async def get_metadata(object_id: str, session: Session = Depends(get_session)):
+  # Task 1: get metadata
+  record = await storage.metadata(session= session, object_id= object_id)
+
+  if not record:
+    return HTTPException(
+      status_code= 200,
+      detail= f"No record found related to object_id: {object_id}"
+    )
+
+  # returning metadata
+  return record
