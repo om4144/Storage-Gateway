@@ -125,5 +125,5 @@ class ObjectStore:
       "filename": record.filename,
       "content_type": record.content_type,
       "created_at": record.created_at.isoformat(),
-      "expires_at": record.expires_at.isoformat(),
+      "expires_at": record.expire_at.isoformat(),
     }
