@@ -97,7 +97,7 @@ class ObjectStore:
 
     # Task 2: Raise an error if deletion failed
     except ClientError as e:
-      raise RuntimeError(f"ailed to delete object '{key}' from storage: {e}")
+      raise RuntimeError(f"Failed to delete object '{key}' from storage: {e}")
 
     # Task 3: Find the object using object_id
     record = session.get(ObjectRecord, object_id)
