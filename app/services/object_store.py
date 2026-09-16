@@ -6,6 +6,7 @@ from fastapi import UploadFile
 from botocore.exceptions import ClientError
 from sqlmodel import Session
 
+from app.db.models import ObjectRecord
 from app.services.client import client
 from app.core.config import get_settings
 
@@ -40,7 +41,7 @@ class ObjectStore:
     expire_at = now + timedelta(days= ttl_days)
 
     # Task 4: Save metadata in database
-    record = ObjectStore(
+    record = ObjectRecord(
       object_id= object_id,
       key= key,
       filename= file.filename,
@@ -96,10 +97,10 @@ class ObjectStore:
 
     # Task 2: Raise an error if deletion failed
     except ClientError as e:
-      raise RuntimeError(f"ailed to delete object '{key}' from storage: {e}")
+      raise RuntimeError(f"Failed to delete object '{key}' from storage: {e}")
 
     # Task 3: Find the object using object_id
-    record = session.get(ObjectStore, object_id)
+    record = session.get(ObjectRecord, object_id)
     if record:
       # task 4: on successfull retrival delete the meta data from the ObjectStore
       session.delete(record)
@@ -111,7 +112,7 @@ class ObjectStore:
     object_id: str
   ) -> dict | None:
     # Task 1: get the data using object_id
-    record = session.get(ObjectStore, object_id)
+    record = session.get(ObjectRecord, object_id)
 
     # Task 2: if not found return none
     if not record:
@@ -124,5 +125,5 @@ class ObjectStore:
       "filename": record.filename,
       "content_type": record.content_type,
       "created_at": record.created_at.isoformat(),
-      "expires_at": record.expires_at.isoformat(),
+      "expires_at": record.expire_at.isoformat(),
     }
